@@ -1,0 +1,3 @@
+#!/bin/sh
+i486-mingw32-gcc -I/usr/i486-mingw32/include/SDL/ main.c -L./ -lpdcurses
+mv a.exe Curses\ Bird.exe
