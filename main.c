@@ -198,13 +198,20 @@ int	checkCol(Map *map)
 }
 
 
+
 static int	askToReplay()
 {
   char ret;
-  move(0,0);
+  int xPos = COLS / 2 - sizeof("You just lose the game with %d point, do you want to replay ?") / 2;
+
   erase();
-  printw("You just lose the game with %d point, do you want to replay ?\n"
-	 "Press Y if you want to try again, N if you don't", score);
+  move(0, xPos);
+  printw("You just lose the game with %d point, do you want to replay ?",
+	 score);
+
+  xPos = COLS / 2 - sizeof("Press Y if you want to try again, N if you don't") / 2;
+  move(1, xPos);
+  printw("Press Y if you want to try again, N if you don't");
   ret = waitForSomething("yYnN");
   if (ret == 'y' || ret == 'Y')
     return (1);
