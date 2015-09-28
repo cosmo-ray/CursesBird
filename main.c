@@ -1,28 +1,18 @@
-/*
-  Copyright (c) 2014, Matthias Gatto
-  All rights reserved.
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-
-  * Redistributions of source code must retain the above copyright
-  notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-  notice, this list of conditions and the following disclaimer in the
-  documentation and/or other materials provided with the distribution.
-  * Neither the name of Matthias Gatto nor the
-  names of its contributors may be used to endorse or promote products
-  derived from this software without specific prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
-  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/* Copyright 2015 Matthias Gatto
+ *
+ * This file is part of Curses Bird.
+ *
+ * Curses Bird is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as published
+ * by the Free Software Foundation.
+ *
+ * Curses Bird is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Butterfly.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include	<string.h>
@@ -45,9 +35,11 @@ int	getBitdFlag(int pos)
 void	initMap(Map *map)
 {
   int i;
+
+  cb_init(map->map, map_cb);
   for (i = 0; i < MAP_W_SIZE  + MAP_THRESHOLD; ++i)
     {
-      map->map[i] = BORDER;
+      cb_set(map->map, i, BORDER);
     }
   map->birdPosY = 9;
   map->bird = getBitdFlag(map->birdPosY);
@@ -97,7 +89,7 @@ void	addPipe(Map *map, int pos)
   if (pos >= (MAP_W_SIZE + MAP_THRESHOLD))
     return ;
   //printw("pipe: 0x%08x\n", pipe << 4);
-  map->map[pos] = ~(pipe << posPipe);
+  cb_set(map->map, pos ,~(pipe << posPipe));
 }
 
 void	affMapCurses(Map *map)
@@ -119,7 +111,7 @@ void	affMapCurses(Map *map)
       line[MAP_W_SIZE] = 0;
       for (i = 0; i < MAP_W_SIZE; ++i)
 	{
-	  if ((1 << i2) & map->map[i])
+	  if ((1 << i2) & cb_get(map->map, i))
 	    line[i] = '#';
 	}
       if (i2 == map->birdPosY)
@@ -183,18 +175,13 @@ int	handleCh(Map *map)
 
 void	rollingMap(Map *map)
 {
-  int	i;
-
-  for (i = 0;i < MAP_W_SIZE + MAP_THRESHOLD - 1; ++i)
-    {
-      map->map[i] = map->map[i + 1];
-    }
+  cb_start_incr(map->map);
   addPipe(map, MAP_W_SIZE + MAP_THRESHOLD - 1);
 }
 
 int	checkCol(Map *map)
 {
-  return (map->bird & map->map[BIRDPOSX]);
+  return (map->bird & cb_get(map->map, BIRDPOSX));
 }
 
 
