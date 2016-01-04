@@ -65,7 +65,7 @@ void	endCurses()
   endwin();
 }
 
-int	getRandDecalage()
+int	getRandGap()
 {
   int ret = (rand() % 2) + 1;
 
@@ -81,7 +81,7 @@ void	addPipe(Map *map, int pos)
   int pipe = NPIPE;
   static int posPipe = 6;
 
-  posPipe += getRandDecalage();
+  posPipe += getRandGap();
   if (posPipe <= 0)
     posPipe = 0;
   else if (posPipe >= MAP_H_SIZE - SIZE_HOLE)
