@@ -27,7 +27,7 @@
 int	score = 0;
 int	mode = NORMAL_MODE;
 
-int	getBitdFlag(int pos)
+int	getBirdFlag(int pos)
 {
   return ((1 << pos));
 }
@@ -42,7 +42,7 @@ void	initMap(Map *map)
       cb_set(map->map, i, BORDER);
     }
   map->birdPosY = 9;
-  map->bird = getBitdFlag(map->birdPosY);
+  map->bird = getBirdFlag(map->birdPosY);
   map->nbrBonus = 0;
 }
 
@@ -65,7 +65,7 @@ void	endCurses()
   endwin();
 }
 
-int	getRandDecalage()
+int	getRandGap()
 {
   int ret = (rand() % 2) + 1;
 
@@ -81,7 +81,7 @@ void	addPipe(Map *map, int pos)
   int pipe = NPIPE;
   static int posPipe = 6;
 
-  posPipe += getRandDecalage();
+  posPipe += getRandGap();
   if (posPipe <= 0)
     posPipe = 0;
   else if (posPipe >= MAP_H_SIZE - SIZE_HOLE)
@@ -150,13 +150,13 @@ int	handleCh(Map *map)
       if (ch == UP_ARROW && !hasDirBeenPress)
 	{
 	  map->birdPosY += 1;
-	  map->bird = getBitdFlag(map->birdPosY);
+	  map->bird = getBirdFlag(map->birdPosY);
 	  hasDirBeenPress = 1;
 	}
       else if (ch == DOWN_ARROW && !hasDirBeenPress)
 	{
 	  map->birdPosY -= 1;
-	  map->bird = getBitdFlag(map->birdPosY);
+	  map->bird = getBirdFlag(map->birdPosY);
 	  hasDirBeenPress = 1;
 	}
       else if (ch == 'q')
