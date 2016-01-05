@@ -165,9 +165,15 @@ int	handleCh(Map *map)
 	  exit(1);
 	}
       else if (ch == LEFT_ARROW)
-	mode = SLOW_MODE;
+	if (mode == SLOW_MODE)
+		mode = NORMAL_MODE;
+	else
+		mode = SLOW_MODE;
       else if (ch == RIGHT_ARROW)
-	mode = FAST_MODE;
+	if (mode == FAST_MODE)
+		mode = NORMAL_MODE;
+	else
+                mode = FAST_MODE;
       else if (ch == 'p')
 	waitForUnpause();
     }
@@ -241,7 +247,6 @@ static int	doGame()
       affMapCurses(&map);
       usleep(getSpeedModifier(speed));
       affMapCurses(&map);
-      mode = NORMAL_MODE;
     }
   return (askToReplay());
 }
