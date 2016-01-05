@@ -123,9 +123,9 @@ void	affMapCurses(Map *map)
 
 void	waitForUnpause()
 {
+  erase();
   printw("the Game is in pause\n");
   while (getch() != 'p');
-  erase();
 }
 
 char	waitForSomething(const char *str)
