@@ -194,8 +194,7 @@ int	checkCol(Map *map)
 }
 
 
-
-static int	askToReplay()
+static int	askToReplay(const char name[15])
 {
   char ret;
   char nickname[15][15];
@@ -251,7 +250,34 @@ static int	askToReplay()
   else if (ret == 'n' || ret == 'N')
     return (0);
   usleep(200000);
-  return askToReplay();
+  return askToReplay(name);
+}
+
+static int enterYourName()
+{
+  erase();
+  char name[15];
+  int ch = 0;
+  int i = 0;
+  printf("Enter your name\n");
+  while(i < 15)
+  {
+  ch = getchar();
+    if (ch == 13)
+    {
+	name[i] = '\0';
+	break;
+    }
+    else
+    {
+	if (i == 14)
+		name[i] = 20;
+	else
+		name[i] = ch;
+    }	
+  i++;
+  } 
+return askToReplay(name); 
 }
 
 static int	getScoreModifier()
@@ -288,7 +314,7 @@ static int	doGame()
       usleep(getSpeedModifier(speed));
       affMapCurses(&map);
     }
-  return (askToReplay());
+  return (enterYourName());
 }
 
 int	main()
