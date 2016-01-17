@@ -17,6 +17,8 @@
 
 #include	<string.h>
 #include	<stdlib.h>
+#include        <stdio.h>
+#include        <errno.h> 
 #include	"CursesAff.h"
 #include	"Map.h"
 
@@ -26,6 +28,7 @@
 
 int	score = 0;
 int	mode = NORMAL_MODE;
+FILE *fhs;   
 
 int	getBirdFlag(int pos)
 {
@@ -123,9 +126,9 @@ void	affMapCurses(Map *map)
 
 void	waitForUnpause()
 {
+  erase();
   printw("the Game is in pause\n");
   while (getch() != 'p');
-  erase();
 }
 
 char	waitForSomething(const char *str)
@@ -181,7 +184,7 @@ int	handleCh(Map *map)
 
 void	rollingMap(Map *map)
 {
-  cb_start_incr(map->map);
+  cb_start_incr(map->map);	
   addPipe(map, MAP_W_SIZE + MAP_THRESHOLD - 1);
 }
 
@@ -191,27 +194,90 @@ int	checkCol(Map *map)
 }
 
 
-
-static int	askToReplay()
+static int	askToReplay(const char name[15])
 {
   char ret;
+  char nickname[15][15];
+  int points[5] = {0};
+  int i = 0;
+  int yPos = 5;
+  int sj6 = score;  
+  fhs = fopen("highscore.txt", "rw+" );
+  if (fhs == NULL)
+  {
+        perror("Error read");
+ 	return -1;
+  }
+  fscanf(fhs, "%s%d", &nickname[0], &points[0]);
+  fscanf(fhs, "%s%d", &nickname[1], &points[1]);
+  fscanf(fhs, "%s%d", &nickname[2], &points[2]);
+  fscanf(fhs, "%s%d", &nickname[3], &points[3]);
+  fscanf(fhs, "%s%d", &nickname[4], &points[4]);
+       
   int xPos = COLS / 2 - sizeof("You just lose the game with %d point, do you want to replay ?") / 2;
 
   erase();
   move(0, xPos);
   printw("You just lose the game with %d point, do you want to replay ?",
 	 score);
-
-  xPos = COLS / 2 - sizeof("Press Y if you want to try again, N if you don't") / 2;
+  while (i < 5)
+  {
+  if (sj6 > points[i])
+  {
+	strcpy(nickname[i], name);
+  	points[i] = sj6;
+  	move(2, xPos);
+  	printw(" New High Score ! Nice work young Padawan  !");
+	break;  
+  }
+    i++;
+  }
+  i = 0;	
   move(1, xPos);
   printw("Press Y if you want to try again, N if you don't");
+  move(3, xPos); 
+  printw("HIGH SCORES");
+  move(5, xPos);
+  for ( i = 0 ; i < 5 ; i++, yPos++)
+  {
+	move (yPos, xPos);
+	printw(" %s:%d ",nickname[i], points[i] ); 
+  }
+  fclose(fhs);
   ret = waitForSomething("yYnN");
   if (ret == 'y' || ret == 'Y')
     return (1);
   else if (ret == 'n' || ret == 'N')
     return (0);
   usleep(200000);
-  askToReplay();
+  return askToReplay(name);
+}
+
+static int enterYourName()
+{
+  erase();
+  char name[15];
+  int ch = 0;
+  int i = 0;
+  printf("Enter your name\n");
+  while(i < 15)
+  {
+  ch = getchar();
+    if (ch == 13)
+    {
+	name[i] = '\0';
+	break;
+    }
+    else
+    {
+	if (i == 14)
+		name[i] = 20;
+	else
+		name[i] = ch;
+    }	
+  i++;
+  } 
+return askToReplay(name); 
 }
 
 static int	getScoreModifier()
@@ -248,14 +314,16 @@ static int	doGame()
       usleep(getSpeedModifier(speed));
       affMapCurses(&map);
     }
-  return (askToReplay());
+  return (enterYourName());
 }
 
 int	main()
 {
+  int ret;
+
   initCurses();
-  while (doGame())
+  while ((ret = doGame()) > 0)
     score = 0;
   endCurses();
-  return (0);
+  return (ret);
 }
