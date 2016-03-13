@@ -102,11 +102,6 @@ void	affMapCurses(Map *map)
   char line[MAP_H_SIZE + 1];
 
   move(0,0);
-  /* printw("bird: 0x%08x\n", map->bird); */
-  /* for (i = 0; i < MAP_H_SIZE; ++i) */
-  /*   { */
-  /*     printw("map col:%d: 0x%08x\n", i, map->map[i]); */
-  /*   } */
   printw("Score: %d\n", score);
   for (i2 = MAP_H_SIZE - 1; i2 >= 0; --i2)
     {
@@ -204,10 +199,10 @@ static int	askToReplay(const char name[15])
   int sj6 = score;  
   fhs = fopen("highscore.txt", "rw+" );
   if (fhs == NULL)
-  {
-        perror("Error read");
- 	return -1;
-  }
+    {
+      perror("Error read");
+      return -1;
+    }
   fscanf(fhs, "%s%d", &nickname[0], &points[0]);
   fscanf(fhs, "%s%d", &nickname[1], &points[1]);
   fscanf(fhs, "%s%d", &nickname[2], &points[2]);
@@ -221,17 +216,17 @@ static int	askToReplay(const char name[15])
   printw("You just lose the game with %d point, do you want to replay ?",
 	 score);
   while (i < 5)
-  {
-  if (sj6 > points[i])
-  {
-	strcpy(nickname[i], name);
-  	points[i] = sj6;
-  	move(2, xPos);
-  	printw(" New High Score ! Nice work young Padawan  !");
-	break;  
-  }
-    i++;
-  }
+    {
+      if (sj6 > points[i])
+	{
+	  strcpy(nickname[i], name);
+	  points[i] = sj6;
+	  move(2, xPos);
+	  printw(" New High Score ! Nice work young Padawan  !");
+	  break;  
+	}
+      i++;
+    }
   i = 0;	
   move(1, xPos);
   printw("Press Y if you want to try again, N if you don't");
@@ -239,10 +234,10 @@ static int	askToReplay(const char name[15])
   printw("HIGH SCORES");
   move(5, xPos);
   for ( i = 0 ; i < 5 ; i++, yPos++)
-  {
-	move (yPos, xPos);
-	printw(" %s:%d ",nickname[i], points[i] ); 
-  }
+    {
+      move (yPos, xPos);
+      printw(" %s:%d ",nickname[i], points[i] ); 
+    }
   fclose(fhs);
   ret = waitForSomething("yYnN");
   if (ret == 'y' || ret == 'Y')
@@ -261,23 +256,23 @@ static int enterYourName()
   int i = 0;
   printf("Enter your name\n");
   while(i < 15)
-  {
-  ch = getchar();
-    if (ch == 13)
     {
-	name[i] = '\0';
-	break;
-    }
-    else
-    {
-	if (i == 14)
-		name[i] = 20;
-	else
-		name[i] = ch;
-    }	
-  i++;
-  } 
-return askToReplay(name); 
+      ch = getchar();
+      if (ch == 13)
+	{
+	  name[i] = '\0';
+	  break;
+	}
+      else
+	{
+	  if (i == 14)
+	    name[i] = 20;
+	  else
+	    name[i] = ch;
+	}	
+      i++;
+    } 
+  return askToReplay(name); 
 }
 
 static int	getScoreModifier()
