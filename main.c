@@ -15,8 +15,10 @@
  * along with Butterfly.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include	<unistd.h>
 #include	<string.h>
 #include	<stdlib.h>
+#include	<time.h>
 #include        <stdio.h>
 #include        <errno.h> 
 #include	"CursesAff.h"
