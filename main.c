@@ -30,7 +30,6 @@
 
 int	score = 0;
 int	mode = NORMAL_MODE;
-FILE *fhs;   
 
 int	getBirdFlag(int pos)
 {
@@ -56,8 +55,6 @@ void	initCurses()
   initscr();
   noecho();
   cbreak();
-  //noraw();
-  //nodelay(1);
   keypad(stdscr, TRUE);
   timeout(0);
   curs_set(0);
@@ -191,90 +188,79 @@ int	checkCol(Map *map)
 }
 
 
-static int	askToReplay(const char name[15])
+static int	askToReplay(char *name)
 {
   char ret;
-  char nickname[15][15];
-  int points[5] = {0};
-  int i = 0;
-  int yPos = 5;
-  int sj6 = score;  
-  fhs = fopen("highscore.txt", "rw+" );
-  if (fhs == NULL)
-    {
-      perror("Error read");
-      return -1;
+  static char nickname[5][256];
+  static int points[5];
+  FILE *fhs;
+
+  fhs = fopen("./highscore.txt", "r" );
+  erase();
+  if (fhs) {
+    for (int  i = 0; i < 5; ++i) {
+      fscanf(fhs, "%s : %d\n", nickname[i], &points[i]);
     }
-  fscanf(fhs, "%s%d", &nickname[0], &points[0]);
-  fscanf(fhs, "%s%d", &nickname[1], &points[1]);
-  fscanf(fhs, "%s%d", &nickname[2], &points[2]);
-  fscanf(fhs, "%s%d", &nickname[3], &points[3]);
-  fscanf(fhs, "%s%d", &nickname[4], &points[4]);
-       
+    fclose(fhs);
+  }
+
+  fhs = fopen("./highscore.txt", "w+" );
   int xPos = COLS / 2 - sizeof("You just lose the game with %d point, do you want to replay ?") / 2;
 
-  erase();
+  move(12, 0);
+
+  for (int  i = 0; i < 5; ++i) {
+    char tmp[256];
+    if (score > points[i]) {
+      strcpy(tmp, nickname[i]);
+      strcpy(nickname[i], name);
+      strcpy(name, tmp);
+      points[i] += score;
+      score = points[i] - score;
+      points[i] -= score;
+      move(3, xPos);
+      printw("New High Score ! ");
+    }
+    fprintf(fhs, "%s : %d\n", nickname[i][0] ? nickname[i] : "none", points[i]);
+  }
+  fprintf(fhs, "-----------------------------------------\n");
+  move(5, xPos);
+  printw("----------- HIGH SCORES -------------");
+
+  for (int yPos = 6, i = 0 ; i < 5 ; i++, yPos++) {
+      move (yPos, xPos);
+      printw(" %s:%d ", nickname[i][0] ? nickname[i] : "none", points[i] );
+  }
+  fclose(fhs);
+ again:
   move(0, xPos);
   printw("You just lose the game with %d point, do you want to replay ?",
 	 score);
-  while (i < 5)
-    {
-      if (sj6 > points[i])
-	{
-	  strcpy(nickname[i], name);
-	  points[i] = sj6;
-	  move(2, xPos);
-	  printw(" New High Score ! Nice work young Padawan  !");
-	  break;  
-	}
-      i++;
-    }
-  i = 0;	
   move(1, xPos);
   printw("Press Y if you want to try again, N if you don't");
-  move(3, xPos); 
-  printw("HIGH SCORES");
-  move(5, xPos);
-  for ( i = 0 ; i < 5 ; i++, yPos++)
-    {
-      move (yPos, xPos);
-      printw(" %s:%d ",nickname[i], points[i] ); 
-    }
-  fclose(fhs);
   ret = waitForSomething("yYnN");
   if (ret == 'y' || ret == 'Y')
     return (1);
   else if (ret == 'n' || ret == 'N')
     return (0);
   usleep(200000);
-  return askToReplay(name);
+  goto again;
 }
 
 static int enterYourName()
 {
+  static char name[256];
+
   erase();
-  char name[15];
-  int ch = 0;
-  int i = 0;
-  printf("Enter your name\n");
-  while(i < 15)
-    {
-      ch = getchar();
-      if (ch == 13)
-	{
-	  name[i] = '\0';
-	  break;
-	}
-      else
-	{
-	  if (i == 14)
-	    name[i] = 20;
-	  else
-	    name[i] = ch;
-	}	
-      i++;
-    } 
-  return askToReplay(name); 
+  printw("Enter your name :)\n");
+  echo();
+  nocbreak();
+  timeout(-1);
+  getnstr(name, 256);
+  timeout(0);
+  noecho();
+  cbreak();
+  return askToReplay(name);
 }
 
 static int	getScoreModifier()
@@ -319,8 +305,10 @@ int	main()
   int ret;
 
   initCurses();
-  while ((ret = doGame()) > 0)
+  while ((ret = doGame()) > 0) {
     score = 0;
+    mode = NORMAL_MODE;
+  }
   endCurses();
   return (ret);
 }

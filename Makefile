@@ -1,6 +1,6 @@
 NAME= "Curses Bird"
 
-CFLAGS= -g
+CFLAGS= -g -std=gnu99
 
 build:	main.o
 	gcc -o ${NAME} main.o -lcurses $(CFLAGS)
