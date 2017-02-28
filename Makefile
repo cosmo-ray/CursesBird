@@ -1,12 +1,20 @@
 NAME= "Curses Bird"
 
-CFLAGS= -g -std=gnu99
+include config.mk
 
-build:	main.o
-	gcc -o ${NAME} main.o -lcurses $(CFLAGS)
+CFLAGS += -std=gnu99
 
-clean:
+LDFLAGS += $(CURSES_LIB)
+
+SRC =	main.c
+
+OBJ =	$(SRC:.c=.o)
+
+build: $(OBJ)
+	$(CC) -o $(NAME) main.o $(CFLAGS) $(LDFLAGS)
+
+clean: $(OBJ)
 	rm main.o
 
 fclean: clean
-	${NAME}
+	rm $(NAME)

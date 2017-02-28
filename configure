@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source configure-helper.sh
+
+add_toolchain mingw-i686
+function mingw-i686 {
+    export CURSES_LIB=$PWD/libpdcurses.a
+    export CC=i686-w64-mingw32-cc
+}
+
+add_toolchain clang
+function clang {
+    export CC=clang
+}
+
+parse_args $@
+
+var_add CURSES_LIB "-lcurses"

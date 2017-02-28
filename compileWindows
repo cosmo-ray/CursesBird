@@ -1,3 +1,4 @@
 #!/bin/sh
-i486-mingw32-gcc -I/usr/i486-mingw32/include/SDL/ main.c -L./ -lpdcurses
+
+x86_64-w64-mingw32-cc -I/usr/i486-mingw32/include/SDL/ main.c -lpdcurses
 mv a.exe Curses\ Bird.exe
