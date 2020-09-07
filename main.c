@@ -20,7 +20,7 @@
 #include	<stdlib.h>
 #include	<time.h>
 #include        <stdio.h>
-#include        <errno.h> 
+#include        <errno.h>
 #include	"CursesAff.h"
 #include	"Map.h"
 
@@ -128,13 +128,18 @@ void	waitForUnpause()
 char	waitForSomething(const char *str)
 {
   int i = 0;
-  char ch = getch();
+  char ch;
+
+again:
+  ch = getch();
 
   for (i = 0; i < strlen(str); ++i)
     {
       if (ch == str[i])
 	return (ch);
     }
+  goto again;
+  return 0;
 }
 
 int	handleCh(Map *map)
@@ -178,7 +183,7 @@ int	handleCh(Map *map)
 
 void	rollingMap(Map *map)
 {
-  cb_start_incr(map->map);	
+  cb_start_incr(map->map);
   addPipe(map, MAP_W_SIZE + MAP_THRESHOLD - 1);
 }
 
@@ -238,6 +243,7 @@ static int	askToReplay(char *name)
 	 score);
   move(1, xPos);
   printw("Press Y if you want to try again, N if you don't");
+  refresh();
   ret = waitForSomething("yYnN");
   if (ret == 'y' || ret == 'Y')
     return (1);

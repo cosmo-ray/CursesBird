@@ -24,7 +24,7 @@
 #define	MAP_W_SIZE 23
 #define	MAP_H_SIZE 25
 #define BORDER 0xFFF00000
-#define NPIPE 0x000000FF // oposite of a pipe a pipe is ~PIPE
+#define NPIPE 0x000000FF // oposite of a pipe is ~PIPE
 #define SIZE_HOLE 8
 #define BIRDPOSX 5
 #define MAP_THRESHOLD 4
