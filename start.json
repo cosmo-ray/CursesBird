@@ -9,6 +9,6 @@
     "CursesBird": {
 	"<type>" : "capp",
 	//"files": ["./modules/CursesBird/main.c"]
-	"files": ["./main.c"]
+	"files": ["./modules/CursesBird/main.c"]
     }
 }
