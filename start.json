@@ -1,0 +1,14 @@
+{
+    "name" : "CursesBird",
+    "starting widget" : "CursesBird",
+    "window size" : [1024, 600],
+    "pre-load" : [
+	{ "path" : "YIRL_MODULES_PATH/c_app/", "type" : "module" }
+    ],
+    "make-prototype": "CursesBird",
+    "CursesBird": {
+	"<type>" : "capp",
+	//"files": ["./modules/CursesBird/main.c"]
+	"files": ["./main.c"]
+    }
+}
