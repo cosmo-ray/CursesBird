@@ -228,7 +228,7 @@ static int	askToReplay(char *name)
     }
     fprintf(fhs, "%s : %d\n", nickname[i][0] ? nickname[i] : "none", points[i]);
   }
-  fprintf(fhs, "-----------------------------------------\n");
+  fprintf(fhs, "%s", "-----------------------------------------\n");
   move(5, xPos);
   printw("----------- HIGH SCORES -------------");
 
